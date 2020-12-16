@@ -1,29 +1,30 @@
 resource "aws_vpc" "app-vpc" {
-  cidr_block = "${var.vpc_cidr}"
+  cidr_block                       = var.vpc_cidr
   assign_generated_ipv6_cidr_block = true
-  enable_dns_support   = true
-  enable_dns_hostnames = true
+  enable_dns_support               = true
+  enable_dns_hostnames             = true
 
   tags = {
     Name        = "${var.name}-vpc"
-    Environment = "${var.environment}"
+    Environment = var.environment
   }
 }
 
 resource "aws_subnet" "public" {
-  vpc_id     = aws_vpc.app-vpc.id
-  cidr_block = "10.0.1.0/24"
+  vpc_id            = aws_vpc.app-vpc.id
+  cidr_block        = "10.0.1.0/24"
   availability_zone = "${var.region}a"
 }
+
 resource "aws_subnet" "public2" {
-  vpc_id     = aws_vpc.app-vpc.id
-  cidr_block = "10.0.3.0/24"
+  vpc_id            = aws_vpc.app-vpc.id
+  cidr_block        = "10.0.3.0/24"
   availability_zone = "${var.region}b"
 }
 
 resource "aws_subnet" "private" {
-  vpc_id     = aws_vpc.app-vpc.id
-  cidr_block = "10.0.2.0/24"
+  vpc_id            = aws_vpc.app-vpc.id
+  cidr_block        = "10.0.2.0/24"
   availability_zone = "${var.region}a"
 }
 

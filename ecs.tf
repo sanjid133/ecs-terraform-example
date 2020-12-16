@@ -1,23 +1,23 @@
 resource "aws_ecs_cluster" "app_cluster" {
   name = "${var.name}-ecs-cluster"
   tags = {
-    Name        = "${var.name}"
-    Environment = "${var.environment}"
+    Name        = var.name
+    Environment = var.environment
   }
 }
 
 resource "aws_ecs_service" "app_service" {
-  name = "${var.name}-svc"
-  cluster = aws_ecs_cluster.app_cluster.id
+  name            = "${var.name}-svc"
+  cluster         = aws_ecs_cluster.app_cluster.id
   task_definition = aws_ecs_task_definition.app_task_definition.arn
-  desired_count = var.replica
-  launch_type = "FARGATE"
+  desired_count   = var.replica
+  launch_type     = "FARGATE"
 
 
   load_balancer {
-    target_group_arn = "${aws_lb_target_group.tg.arn}"
-    container_name = "${var.name}"
-    container_port = var.container_port
+    target_group_arn = aws_lb_target_group.tg.arn
+    container_name   = var.name
+    container_port   = var.container_port
   }
 
   network_configuration {
@@ -37,23 +37,23 @@ resource "aws_cloudwatch_log_group" "app-log" {
 }
 
 resource "aws_ecs_task_definition" "app_task_definition" {
-  family = "${var.name}-app"
-  container_definitions = data.template_file.app.rendered
-  cpu = 256
-  memory = 512
-  execution_role_arn = data.aws_iam_role.ecs_execution_role.arn
+  family                   = "${var.name}-app"
+  container_definitions    = data.template_file.app.rendered
+  cpu                      = 256
+  memory                   = 512
+  execution_role_arn       = data.aws_iam_role.ecs_execution_role.arn
   requires_compatibilities = ["FARGATE"]
-  network_mode = "awsvpc"
+  network_mode             = "awsvpc"
 }
 
 data "template_file" "app" {
-  template = "${file("tasks/app.json")}"
+  template = file("tasks/app.json")
   vars = {
-    name = var.name
+    name       = var.name
     image_name = aws_ecr_repository.app-ecr.repository_url
-    image_tag = var.image_tag
+    image_tag  = var.image_tag
     aws_region = var.region
-    port = var.container_port
+    port       = var.container_port
   }
 }
 
@@ -124,7 +124,7 @@ data "aws_iam_policy_document" "ecs-task-assume-role" {
     actions = ["sts:AssumeRole"]
 
     principals {
-      type = "Service"
+      type        = "Service"
       identifiers = ["ecs-tasks.amazonaws.com"]
     }
   }
