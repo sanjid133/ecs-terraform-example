@@ -3,7 +3,7 @@ variable "region" {
 }
 
 variable "name" {
-  default = "hello-world"
+  default = "fh-devops-challenge"
 }
 
 variable "container_port" {
@@ -19,7 +19,7 @@ variable "vpc_cidr" {
 }
 
 variable "image_name" {
-  default = "jimmysawczuk/sun-api"
+  default = ""
 }
 
 
@@ -29,4 +29,13 @@ variable "image_tag" {
 
 variable "replica" {
   default = 1
+}
+
+variable "availability_zones" {
+  type = "list"
+  default = [
+    "us-east-2a",
+    "us-east-2b",
+    "us-east-2c",
+  ]
 }

@@ -80,7 +80,7 @@ resource "aws_alb" "alb" {
 
   subnets = [
     aws_subnet.public.id,
-    aws_subnet.private.id,
+    aws_subnet.public2.id,
   ]
 
   security_groups = [
