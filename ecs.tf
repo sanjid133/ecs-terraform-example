@@ -38,27 +38,7 @@ resource "aws_cloudwatch_log_group" "app-log" {
 
 resource "aws_ecs_task_definition" "app_task_definition" {
   family = "${var.name}-app"
-  container_definitions = <<EOF
-[
-    {
-      "name": "${var.name}",
-      "image": "${var.image}",
-      "portMappings": [
-        {
-          "containerPort": 3000
-        }
-      ],
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-region": "${var.region}",
-          "awslogs-group": "/ecs/${var.name}",
-          "awslogs-stream-prefix": "ecs"
-        }
-      }
-    }
-  ]
-EOF
+  container_definitions = data.template_file.app.rendered
   cpu = 256
   memory = 512
   execution_role_arn = data.aws_iam_role.ecs_execution_role.arn
@@ -66,6 +46,15 @@ EOF
   network_mode = "awsvpc"
 }
 
+data "template_file" "app" {
+  template = "${file("tasks/app.json")}"
+  vars = {
+    name = var.name
+    image_name = var.image_name
+    image_tag = var.image_tag
+    aws_region = var.region
+  }
+}
 
 resource "aws_lb_target_group" "tg" {
   name        = "${var.name}-tg"
