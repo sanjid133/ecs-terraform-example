@@ -84,8 +84,7 @@ resource "aws_alb" "alb" {
   ]
 
   security_groups = [
-    aws_security_group.http.id,
-    aws_security_group.https.id,
+    aws_security_group.allow_http_https.id,
     aws_security_group.egress-all.id,
   ]
 

@@ -73,9 +73,9 @@ resource "aws_route" "private_ngw" {
   nat_gateway_id         = aws_nat_gateway.ngw.id
 }
 
-resource "aws_security_group" "http" {
+resource "aws_security_group" "allow_http_https" {
   name        = "${var.name}-http"
-  description = "HTTP traffic"
+  description = "Allow HTTP/HTTPS traffic"
   vpc_id      = aws_vpc.app-vpc.id
 
   ingress {
@@ -84,12 +84,6 @@ resource "aws_security_group" "http" {
     protocol    = "TCP"
     cidr_blocks = ["0.0.0.0/0"]
   }
-}
-
-resource "aws_security_group" "https" {
-  name        = "${var.name}-https"
-  description = "HTTPS traffic"
-  vpc_id      = aws_vpc.app-vpc.id
 
   ingress {
     from_port   = 443
