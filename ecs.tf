@@ -17,7 +17,7 @@ resource "aws_ecs_service" "app_service" {
   load_balancer {
     target_group_arn = "${aws_lb_target_group.tg.arn}"
     container_name = "${var.name}"
-    container_port = 3000
+    container_port = var.container_port
   }
 
   network_configuration {
@@ -50,15 +50,16 @@ data "template_file" "app" {
   template = "${file("tasks/app.json")}"
   vars = {
     name = var.name
-    image_name = var.image_name
+    image_name = aws_ecr_repository.app-ecr.repository_url
     image_tag = var.image_tag
     aws_region = var.region
+    port = var.container_port
   }
 }
 
 resource "aws_lb_target_group" "tg" {
   name        = "${var.name}-tg"
-  port        = 3000
+  port        = var.container_port
   protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = aws_vpc.app-vpc.id

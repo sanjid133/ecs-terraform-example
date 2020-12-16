@@ -5,6 +5,11 @@ variable "region" {
 variable "name" {
   default = "hello-world"
 }
+
+variable "container_port" {
+  default = 9292
+}
+
 variable "environment" {
   default = "production"
 }
